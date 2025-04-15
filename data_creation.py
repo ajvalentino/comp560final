@@ -17,20 +17,17 @@ if not hasattr(base_indexes, 'Int64Index'):
 sys.modules['pandas.core.indexes.numeric'] = base_indexes
 
 # --- Step 1: Load Data Files from the Current Folder ---
-pp_recipes = pd.read_csv('recipedata/PP_recipes.csv')
-raw_recipes = pd.read_csv('recipedata/RAW_recipes.csv')
+pp_recipes = pd.read_csv('/Users/graceku/COMP-560-final-personal/PP_recipes.csv')
+raw_recipes = pd.read_csv('/Users/graceku/COMP-560-final-personal/RAW_recipes.csv')
 
-with open('recipedata/ingr_map.pkl', 'rb') as f:
+with open('/Users/graceku/COMP-560-final-personal/ingr_map.pkl', 'rb') as f:
     ingr_map = pickle.load(f)
 
 # --- Step 2: Map Ingredient IDs to Names Using "ingredient_ids" Column ---
+ingredient_id_to_name = {i: name for i, name in enumerate(ingr_map['replaced'])}
 def map_ingredients(ingredient_ids_str):
-    # Split the string into individual ingredient IDs.
-    ingredient_ids = ingredient_ids_str.split(',')
-    # Strip extra whitespace from each ID.
-    ingredient_ids = [ing.strip() for ing in ingredient_ids]
-    # Map each ID to its corresponding ingredient name using ingr_map.
-    ingredient_names = [ingr_map.get(ing, ing) for ing in ingredient_ids]
+    ingredient_ids = ast.literal_eval(ingredient_ids_str)
+    ingredient_names = [ingredient_id_to_name.get(int(ing), str(ing)) for ing in ingredient_ids]
     return ingredient_names
 
 pp_recipes['ingredient_names'] = pp_recipes['ingredient_ids'].apply(map_ingredients)
@@ -55,6 +52,4 @@ raw_recipes['calorie_count'] = raw_recipes['nutrition'].apply(extract_calories)
 merged_df = pd.merge(pp_recipes, raw_recipes[['id', 'calorie_count']], on='id', how='inner')
 
 # --- Step 5: Save the Merged Data to a CSV in the Current Folder ---
-merged_df.to_csv('recipedata/merged_recipes.csv', index=False)
-
-print
+merged_df.to_csv('/Users/graceku/comp560final/merged_recipes.csv', index=False)
