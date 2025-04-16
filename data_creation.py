@@ -49,7 +49,7 @@ raw_recipes['calorie_count'] = raw_recipes['nutrition'].apply(extract_calories)
 
 # --- Step 4: Merge the DataFrames ---
 # Merge PP_recipes and RAW_recipes on the "id" column using an inner join.
-merged_df = pd.merge(pp_recipes, raw_recipes[['id', 'calorie_count']], on='id', how='inner')
+merged_df = pd.merge(pp_recipes[['id', 'i', 'name_tokens', 'ingredient_ids', 'ingredient_names']], raw_recipes[['id', 'calorie_count']], on='id', how='inner')
 
 # --- Step 5: Save the Merged Data to a CSV in the Current Folder ---
 merged_df.to_csv('/Users/graceku/comp560final/merged_recipes.csv', index=False)
